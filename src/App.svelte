@@ -11,8 +11,16 @@
 	const wanderer = new Wanderer(gameContext, {
 		centreX: 100,
 		centreY: 100,
-		radius: 70
+		radius: 35
 	});
+	document.addEventListener('keyup', (e) => {
+		if (e.code === 'ArrowDown') {
+			wanderer.moveDown();
+		}
+		if (e.code === 'ArrowUp') {
+			wanderer.moveUp();
+		}
+	})
 </script>
 
 <main>
