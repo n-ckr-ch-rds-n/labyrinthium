@@ -1,13 +1,22 @@
 <script lang="ts">
     import { Wanderer } from "./wanderer";
+	import { Maze } from "./maze";
 
-
+	const complexity = 8;
 	const gameArea: HTMLCanvasElement = document.createElement('canvas');
-	gameArea.width = window.innerWidth;
-    gameArea.height = window.innerHeight;
+	const squareWidth = Math.floor(window.innerWidth / complexity);
+	gameArea.width = squareWidth * complexity;
+	const numberOfRows = Math.floor(window.innerHeight / squareWidth);
+    gameArea.height = squareWidth * numberOfRows;
 	document.body.insertBefore(gameArea, document.body.childNodes[0]);
-
     const gameContext: CanvasRenderingContext2D = gameArea.getContext("2d");
+
+	const maze = new Maze(gameContext, {
+		squareWidth,
+		numberOfColumns: complexity,
+		numberOfRows
+	});
+	maze.build();
 	const wanderer = new Wanderer(gameContext, {
 		centreX: 100,
 		centreY: 100,
