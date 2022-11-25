@@ -1,8 +1,9 @@
 import type { CircleDimensions } from "./circle.dimensions";
+import type { Position } from "./position";
 
 export class Wanderer {
 
-    private position: {centreX: number; centreY: number};
+    private position: Position;
     private squareWidth: number;
 
     constructor(private gameContext: CanvasRenderingContext2D,
@@ -14,25 +15,43 @@ export class Wanderer {
     }
 
     moveDown() {
-        this.clearSquare();
-        this.position.centreY = this.position.centreY + this.squareWidth;
-        this.drawCircle(this.position);
+        this.move({
+            ...this.position,
+            centreY: this.position.centreY + this.squareWidth
+        });
     }
 
     moveUp() {
-        this.clearSquare();
-        this.position.centreY = this.position.centreY - this.squareWidth;
-        this.drawCircle(this.position);
+        this.move({
+            ...this.position,
+            centreY: this.position.centreY - this.squareWidth
+        });
     }
 
     moveRight() {
-        this.clearSquare();
-        this.position.centreX = this.position.centreX + this.squareWidth;
+        this.move({
+            ...this.position,
+            centreX: this.position.centreX + this.squareWidth,
+        });
     }
 
-    private drawCircle(request: {centreX: number; centreY: number}) {
+
+    moveLeft() {
+        this.move({
+            ...this.position,
+            centreX: this.position.centreX - this.squareWidth,
+        });
+    }
+
+    private move(position: Position) {
+        this.clearSquare();
+        this.drawCircle(position);
+        this.position = position;
+    }
+
+    private drawCircle(position: Position) {
         this.gameContext.beginPath();
-        const {centreX, centreY} = request;
+        const {centreX, centreY} = position;
         this.gameContext.arc(centreX, centreY, this.dimensions.radius, 0, 3 * Math.PI);
         this.gameContext.stroke();
     }
@@ -41,6 +60,11 @@ export class Wanderer {
         const squareRadius = this.dimensions.radius * 2;
         this.gameContext.clearRect(this.position.centreX - squareRadius, 
             this.position.centreY - squareRadius, 
-            this.squareWidth, this.squareWidth)
+            this.squareWidth, this.squareWidth);
+        // this.gameContext.beginPath();
+        // this.gameContext.rect(this.position.centreX - squareRadius, 
+        //     this.position.centreY - squareRadius, 
+        //     this.squareWidth, this.squareWidth);
+        //     this.gameContext.stroke();
     }
 }

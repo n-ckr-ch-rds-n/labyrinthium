@@ -20,6 +20,12 @@
 		if (e.code === 'ArrowUp') {
 			wanderer.moveUp();
 		}
+		if (e.code === 'ArrowRight') {
+			wanderer.moveRight();
+		}
+		if (e.code === 'ArrowLeft') {
+			wanderer.moveLeft();
+		}
 	})
 </script>
 
