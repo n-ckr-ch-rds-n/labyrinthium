@@ -5,8 +5,14 @@
 	const gameArea: HTMLCanvasElement = document.createElement('canvas');
 	gameArea.width = window.innerWidth;
     gameArea.height = window.innerHeight;
+	document.body.insertBefore(gameArea, document.body.childNodes[0]);
+
     const gameContext: CanvasRenderingContext2D = gameArea.getContext("2d");
-	const wanderer = new Wanderer(gameContext);
+	const wanderer = new Wanderer(gameContext, {
+		centreX: 100,
+		centreY: 100,
+		radius: 70
+	});
 </script>
 
 <main>
