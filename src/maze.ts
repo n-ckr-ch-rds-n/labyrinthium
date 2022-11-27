@@ -1,6 +1,5 @@
 import type { MazeOptions } from "./maze.options";
 import type { GridSquare } from "./grid.square";
-import type { Route } from "./route";
 import type { GridLocation } from "./grid.location";
 
 export class Maze {
@@ -11,10 +10,8 @@ export class Maze {
     build() {
         const layout = this.generateLayout();
         const route = this.toRoute(layout);
-        console.log(route);
         for (const row of route) {
             for (const square of row) {
-                console.log(square);
                 this.gameContext.fillStyle = square.fillStyle;
                 const {squareWidth} = this.options;
                 this.gameContext.fillRect(
@@ -27,24 +24,27 @@ export class Maze {
         }
     }
 
-    toRoute(layout): Route[][] {
-        const shadedSquares = layout.map(row => row
-            .map(square => ({...square, fillStyle: 'green'})));
-        const initRow = layout.length - 1;
-        const initCol = 0;
-        const startPosition = layout[layout.length - 1][0];
-        const nextPositionOptions = []
-        return shadedSquares;
-    }
+    toRoute(layout: GridSquare[][]): GridSquare[][] {
+        const routeLength = Math.floor(layout.length * layout[0].length / 3);
+        let routeSquare: GridLocation = {
+            row: layout.length - 1,
+            column: 0
+        };
+        for (let i = 0; i <= routeLength; i ++) {
+            layout[routeSquare.row][routeSquare.column].fillStyle = 'white';
+            routeSquare = this.toRouteNext(layout, routeSquare);
+        }
+        return layout;
+    } 
 
     toRouteNext(layout: GridSquare[][], currentLocation: GridLocation): GridLocation {
         const options: GridLocation[] = [
             {...currentLocation, row: currentLocation.row + 1},
-            {...currentLocation, row: currentLocation.row = 1},
+            {...currentLocation, row: currentLocation.row - 1},
             {...currentLocation, column: currentLocation.column + 1},
-            {...currentLocation, column: currentLocation.column + 1}
-        ].filter(o => !!layout[o.row][o.column]);
-        const optionIndex = Math.floor(Math.random() * (options.length - 0 + 1) + 0);
+            {...currentLocation, column: currentLocation.column - 1}
+        ].filter(o => layout[o.row] && layout[o.row][o.column]);
+        const optionIndex = this.toRandomIndex(0, options.length - 1);
         return options[optionIndex];
     }
 
@@ -52,9 +52,14 @@ export class Maze {
         return [...Array(this.options.numberOfRows)].map((a, i) => {
             const y = i * this.options.squareWidth;
             return [...Array(this.options.numberOfColumns)].map((a, i) => ({
-                y, x: i * this.options.squareWidth
+                y, x: i * this.options.squareWidth,
+                fillStyle: 'green'
             }))
         });
+    }
+
+    private toRandomIndex(min: number, max: number): number {
+        return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
 }
