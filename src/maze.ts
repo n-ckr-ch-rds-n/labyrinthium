@@ -2,18 +2,27 @@ import type { MazeOptions } from "./maze.options";
 import type { GridSquare } from "./grid.square";
 import type { GridLocation } from "./grid.location";
 import { Direction } from "./direction";
+import { SquareKind } from "./square.kind";
 
 export class Maze {
 
-    constructor(private gameContext: CanvasRenderingContext2D,
-        private options: MazeOptions) {}
+    colourBySquareKind: Record<SquareKind, string> = {
+        [SquareKind.Path]: 'white',
+        [SquareKind.Wall]: 'green',
+        [SquareKind.End]: 'yellow'
+    }
+
+    constructor(
+        private gameContext: CanvasRenderingContext2D,
+        private options: MazeOptions
+    ) {}
 
     build() {
         const layout = this.generateLayout();
         const route = this.toRoute(layout);
         for (const row of route) {
             for (const square of row) {
-                this.gameContext.fillStyle = square.fillStyle;
+                this.gameContext.fillStyle = this.colourBySquareKind[square.kind];
                 const {squareWidth} = this.options;
                 this.gameContext.fillRect(
                     square.x,
@@ -28,23 +37,22 @@ export class Maze {
     toRoute(layout: GridSquare[][]): GridSquare[][] {
         let totalSteps = this.toTotalSteps(layout);
         let position: GridLocation = {
-            row: layout.length - 1,
-            column: 0
+            row: this.toRandomNumberInRange(0, layout.length - 1),
+            column: this.toRandomNumberInRange(0, layout[0].length - 1)
         };
         while (totalSteps >= 0) {
             const numberOfStepsToTake = this.toRandomNumberInRange(1, 5);
             const direction = this.generateDirection();
-            console.log(direction);
             for (let i = 0; i <= numberOfStepsToTake; i++) {
-                layout[position.row][position.column].fillStyle = 'white';
                 const newPosition = this.toNewPosition(position, direction);
                 if (this.positionValid(newPosition, layout)) {
                     position = newPosition;
+                    layout[position.row][position.column].kind = SquareKind.Path;
                     totalSteps--;
                 }
-                console.log(position);
             }
         }
+        layout[position.row][position.column].kind = SquareKind.End;
         return layout;
     }
 
@@ -72,7 +80,7 @@ export class Maze {
             const y = i * this.options.squareWidth;
             return [...Array(this.options.numberOfColumns)].map((a, i) => ({
                 y, x: i * this.options.squareWidth,
-                fillStyle: 'green'
+                kind: SquareKind.Wall
             }))
         });
     }
@@ -83,6 +91,10 @@ export class Maze {
 
     private toTotalSteps(layout: GridSquare[][]): number {
         return Math.floor(layout.length * layout[0].length / 3);
+    }
+
+    private toRandomPosition() {
+
     }
 
 }
