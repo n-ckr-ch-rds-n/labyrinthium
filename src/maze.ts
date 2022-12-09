@@ -1,6 +1,7 @@
 import type { MazeOptions } from "./maze.options";
 import type { GridSquare } from "./grid.square";
 import type { GridLocation } from "./grid.location";
+import { Direction } from "./direction";
 
 export class Maze {
 
@@ -25,27 +26,45 @@ export class Maze {
     }
 
     toRoute(layout: GridSquare[][]): GridSquare[][] {
-        const routeLength = Math.floor(layout.length * layout[0].length / 3);
-        let routeSquare: GridLocation = {
+        let totalSteps = this.toTotalSteps(layout);
+        let position: GridLocation = {
             row: layout.length - 1,
             column: 0
         };
-        for (let i = 0; i <= routeLength; i ++) {
-            layout[routeSquare.row][routeSquare.column].fillStyle = 'white';
-            routeSquare = this.toRouteNext(layout, routeSquare);
+        while (totalSteps >= 0) {
+            const numberOfStepsToTake = this.toRandomNumberInRange(1, 5);
+            const direction = this.generateDirection();
+            console.log(direction);
+            for (let i = 0; i <= numberOfStepsToTake; i++) {
+                layout[position.row][position.column].fillStyle = 'white';
+                const newPosition = this.toNewPosition(position, direction);
+                if (this.positionValid(newPosition, layout)) {
+                    position = newPosition;
+                    totalSteps--;
+                }
+                console.log(position);
+            }
         }
         return layout;
-    } 
+    }
 
-    toRouteNext(layout: GridSquare[][], currentLocation: GridLocation): GridLocation {
-        const options: GridLocation[] = [
-            {...currentLocation, row: currentLocation.row + 1},
-            {...currentLocation, row: currentLocation.row - 1},
-            {...currentLocation, column: currentLocation.column + 1},
-            {...currentLocation, column: currentLocation.column - 1}
-        ].filter(o => layout[o.row] && layout[o.row][o.column]);
-        const optionIndex = this.toRandomIndex(0, options.length - 1);
-        return options[optionIndex];
+    positionValid(position: GridLocation, layout: GridSquare[][]): boolean {
+        return !!(layout[position.row] && layout[position.row][position.column]);
+    }
+
+    generateDirection(): Direction {
+        const directions = Object.values(Direction);
+        return directions[this.toRandomNumberInRange(0, directions.length - 1)];
+    }
+
+    toNewPosition(currentPosition: GridLocation, direction: Direction): GridLocation {
+        const newPositionByDirection: Record<Direction, GridLocation> = {
+            [Direction.North]: {...currentPosition, row: currentPosition.row - 1},
+            [Direction.South]: {...currentPosition, row: currentPosition.row + 1},
+            [Direction.East]: {...currentPosition, column: currentPosition.column + 1},
+            [Direction.West]: {...currentPosition, column: currentPosition.column - 1}
+        }
+        return newPositionByDirection[direction];
     }
 
     private generateLayout(): GridSquare[][] {
@@ -58,8 +77,12 @@ export class Maze {
         });
     }
 
-    private toRandomIndex(min: number, max: number): number {
+    private toRandomNumberInRange(min: number, max: number): number {
         return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    private toTotalSteps(layout: GridSquare[][]): number {
+        return Math.floor(layout.length * layout[0].length / 3);
     }
 
 }

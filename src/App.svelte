@@ -2,7 +2,7 @@
     import { Wanderer } from "./wanderer";
 	import { Maze } from "./maze";
 
-	const complexity = 8;
+	const complexity = 50;
 	const gameArea: HTMLCanvasElement = document.createElement('canvas');
 	const squareWidth = Math.floor(window.innerWidth / complexity);
 	gameArea.width = squareWidth * complexity;
