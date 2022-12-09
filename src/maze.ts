@@ -9,8 +9,11 @@ export class Maze {
     colourBySquareKind: Record<SquareKind, string> = {
         [SquareKind.Path]: 'white',
         [SquareKind.Wall]: 'green',
-        [SquareKind.End]: 'yellow'
+        [SquareKind.End]: 'yellow',
+        [SquareKind.Start]: 'pink'
     }
+
+    public startPosition: GridLocation;
 
     constructor(
         private gameContext: CanvasRenderingContext2D,
@@ -36,10 +39,8 @@ export class Maze {
 
     toRoute(layout: GridSquare[][]): GridSquare[][] {
         let totalSteps = this.toTotalSteps(layout);
-        let position: GridLocation = {
-            row: this.toRandomNumberInRange(0, layout.length - 1),
-            column: this.toRandomNumberInRange(0, layout[0].length - 1)
-        };
+        this.startPosition = this.toRandomPosition(layout);
+        let position = this.startPosition;
         while (totalSteps >= 0) {
             const numberOfStepsToTake = this.toRandomNumberInRange(1, 5);
             const direction = this.generateDirection();
@@ -53,6 +54,7 @@ export class Maze {
             }
         }
         layout[position.row][position.column].kind = SquareKind.End;
+        layout[this.startPosition.row][this.startPosition.column].kind = SquareKind.Start;
         return layout;
     }
 
@@ -93,8 +95,11 @@ export class Maze {
         return Math.floor(layout.length * layout[0].length / 3);
     }
 
-    private toRandomPosition() {
-
+    private toRandomPosition(layout: GridSquare[][]) {
+       return {
+            row: this.toRandomNumberInRange(0, layout.length - 1),
+            column: this.toRandomNumberInRange(0, layout[0].length - 1)
+        }
     }
 
 }
