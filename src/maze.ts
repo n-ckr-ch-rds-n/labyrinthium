@@ -22,8 +22,12 @@ export class Maze {
 
     build() {
         const layout = this.generateLayout();
-        const route = this.toRoute(layout);
-        for (const row of route) {
+        const layoutWithRoute = this.toLayoutWithRoute(layout);
+        this.drawMaze(layout);
+    }
+
+    drawMaze(layout: GridSquare[][]) {
+        for (const row of layout) {
             for (const square of row) {
                 this.gameContext.fillStyle = this.colourBySquareKind[square.kind];
                 const {squareWidth} = this.options;
@@ -37,7 +41,7 @@ export class Maze {
         }
     }
 
-    toRoute(layout: GridSquare[][]): GridSquare[][] {
+    toLayoutWithRoute(layout: GridSquare[][]): GridSquare[][] {
         let totalSteps = this.toTotalSteps(layout);
         this.startPosition = this.toRandomPosition(layout);
         let position = this.startPosition;
@@ -82,9 +86,14 @@ export class Maze {
             const y = i * this.options.squareWidth;
             return [...Array(this.options.numberOfColumns)].map((a, i) => ({
                 y, x: i * this.options.squareWidth,
-                kind: SquareKind.Wall
+                kind: this.toWallOrPath()
             }))
         });
+    }
+
+    private toWallOrPath() {
+        const squareKinds = [SquareKind.Path, SquareKind.Wall, SquareKind.Wall];
+        return squareKinds[this.toRandomNumberInRange(0, squareKinds.length - 1)];
     }
 
     private toRandomNumberInRange(min: number, max: number): number {
