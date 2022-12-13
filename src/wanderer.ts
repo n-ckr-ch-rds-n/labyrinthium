@@ -1,27 +1,36 @@
 import type { CircleDimensions } from "./circle.dimensions";
 import type { Position } from "./position";
-import { Maze } from "./maze";
+import type { MazeData } from "./maze.data";
+import type { GridLocation } from "./grid.location";
+import type { GridSquare } from "./grid.square";
 
 export class Wanderer {
 
     private position: Position;
     private squareWidth: number;
 
+    private location: GridLocation;
+
     constructor(private gameContext: CanvasRenderingContext2D,
                 private dimensions: CircleDimensions,
-                private maze: Maze) {
-        this.gameContext.fillStyle = 'black';
-        console.log(this.maze.startPosition);
-        this.gameContext.fillRect(
-            this.maze.startPosition.x,
-            this.maze.startPosition.y,
-            12,
-            12
-            );
+                private maze: MazeData) {
+        this.location = {...this.maze.startPosition};
+        const startSquare: GridSquare = this.maze.layout[this.location.row][this.location.column];
+        this.drawWanderer(startSquare.x, startSquare.y);
         const {centreX, centreY} = this.dimensions;
         this.position = {centreX, centreY};
         this.squareWidth = this.dimensions.radius * 4;
         // this.drawCircle({centreX, centreY});
+    }
+
+    drawWanderer(x: number, y: number) {
+        this.gameContext.fillStyle = 'black';
+        this.gameContext.fillRect(
+            x,
+            y,
+            this.maze.squareWidth,
+            this.maze.squareWidth
+            );
     }
 
     moveDown() {

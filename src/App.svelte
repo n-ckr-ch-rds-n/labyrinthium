@@ -2,7 +2,7 @@
     import { Wanderer } from "./wanderer";
 	import { Maze } from "./maze";
 
-	const complexity = 100;
+	const complexity = 50;
 	const gameArea: HTMLCanvasElement = document.createElement('canvas');
 	const squareWidth = Math.floor(window.innerWidth / complexity);
 	gameArea.width = squareWidth * complexity;
@@ -20,12 +20,12 @@
 		numberOfColumns: complexity,
 		numberOfRows
 	});
-	// maze.build();
+	const mazeData = maze.build();
 	const wanderer = new Wanderer(gameContext, {
 		centreX: 100,
 		centreY: 100,
 		radius: 35
-	}, maze);
+	}, mazeData);
 	document.addEventListener('keyup', (e) => {
 		if (e.code === 'ArrowDown') {
 			wanderer.moveDown();

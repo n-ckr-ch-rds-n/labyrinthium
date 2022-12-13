@@ -3,6 +3,7 @@ import type { GridSquare } from "./grid.square";
 import type { GridLocation } from "./grid.location";
 import { Direction } from "./direction";
 import { SquareKind } from "./square.kind";
+import type { MazeData } from "./maze.data";
 
 export class Maze {
 
@@ -13,29 +14,23 @@ export class Maze {
         [SquareKind.Start]: 'pink'
     }
 
-    private _layout: GridSquare[][]
-    private _startPosition: GridSquare;
+    private startPosition: GridLocation;
 
     constructor(
         private gameContext: CanvasRenderingContext2D,
         private options: MazeOptions
     ) {
-        this._layout = this.build();
     }
 
-    get layout(): GridSquare[][] {
-        return this._layout;
-    }
-
-    get startPosition() {
-        return this._startPosition;
-    }
-
-    build(): GridSquare[][] {
+    build(): MazeData {
         const layout = this.generateLayout();
         const layoutWithRoute = this.toLayoutWithRoute(layout);
         this.drawMaze(layoutWithRoute);
-        return layoutWithRoute;
+        return {
+            startPosition: this.startPosition,
+            layout: layoutWithRoute,
+            squareWidth: this.options.squareWidth
+        };
     }
 
     drawMaze(layout: GridSquare[][]) {
@@ -55,8 +50,8 @@ export class Maze {
 
     toLayoutWithRoute(layout: GridSquare[][]): GridSquare[][] {
         let totalSteps = this.toTotalSteps(layout);
-        const startPosition = this.toRandomPosition(layout);
-        let position = startPosition;
+        this.startPosition = this.toRandomPosition(layout);
+        let position = this.startPosition;
         while (totalSteps >= 0) {
             const numberOfStepsToTake = this.toRandomNumberInRange(1, 5);
             const direction = this.generateDirection();
@@ -70,8 +65,7 @@ export class Maze {
             }
         }
         layout[position.row][position.column].kind = SquareKind.End;
-        layout[startPosition.row][startPosition.column].kind = SquareKind.Start;
-        this._startPosition = layout[startPosition.row][startPosition.column];
+        layout[this.startPosition.row][this.startPosition.column].kind = SquareKind.Start;
         return layout;
     }
 
