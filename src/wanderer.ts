@@ -4,27 +4,22 @@ import type { GridSquare } from "./grid.square";
 import type { MovementService } from "./movement.service";
 import { Direction } from "./direction";
 import { SquareKind } from "./square.kind";
+import type { DrawService } from "./draw.service";
 
 export class Wanderer {
 
     private location: GridLocation;
 
-    constructor(private gameContext: CanvasRenderingContext2D,
-                private maze: MazeData,
-                private movementService: MovementService) {
+    constructor(private maze: MazeData,
+                private movementService: MovementService,
+                private drawService: DrawService) {
         this.location = {...this.maze.startPosition};
         const startSquare: GridSquare = this.maze.layout[this.location.row][this.location.column];
         this.drawWanderer(startSquare.x, startSquare.y);
     }
 
     drawWanderer(x: number, y: number) {
-        this.gameContext.fillStyle = 'pink';
-        this.gameContext.fillRect(
-            x,
-            y,
-            this.maze.squareWidth,
-            this.maze.squareWidth
-            );
+        this.drawService.drawSquare({x, y, kind: SquareKind.Wanderer});
     }
 
     moveDown() {
@@ -50,7 +45,7 @@ export class Wanderer {
 
     private clearSquare(oldPosition: GridLocation) {
         const squareToClear = this.maze.layout[oldPosition.row][oldPosition.column];
-        this.gameContext.clearRect(squareToClear.x, squareToClear.y, this.maze.squareWidth, this.maze.squareWidth);
+        this.drawService.drawSquare(squareToClear);
     }
 
     private newPositionValid(newPosition: GridLocation) {

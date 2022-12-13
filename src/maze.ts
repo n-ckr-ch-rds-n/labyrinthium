@@ -5,15 +5,9 @@ import { Direction } from "./direction";
 import { SquareKind } from "./square.kind";
 import type { MazeData } from "./maze.data";
 import type { MovementService } from "./movement.service";
+import { colourBySquareKind } from "./colour.by.square.kind";
 
 export class Maze {
-
-    private colourBySquareKind: Record<SquareKind, string> = {
-        [SquareKind.Path]: 'black',
-        [SquareKind.Wall]: 'green',
-        [SquareKind.End]: 'orange',
-        [SquareKind.Start]: 'pink'
-    }
 
     private startPosition: GridLocation;
 
@@ -38,7 +32,7 @@ export class Maze {
     drawMaze(layout: GridSquare[][]) {
         for (const row of layout) {
             for (const square of row) {
-                this.gameContext.fillStyle = this.colourBySquareKind[square.kind];
+                this.gameContext.fillStyle = colourBySquareKind[square.kind];
                 const {squareWidth} = this.options;
                 this.gameContext.fillRect(
                     square.x,
@@ -71,11 +65,11 @@ export class Maze {
         return layout;
     }
 
-    positionValid(position: GridLocation, layout: GridSquare[][]): boolean {
+    private positionValid(position: GridLocation, layout: GridSquare[][]): boolean {
         return !!(layout[position.row] && layout[position.row][position.column]);
     }
 
-    generateDirection(): Direction {
+   private generateDirection(): Direction {
         const directions = Object.values(Direction);
         return directions[this.toRandomNumberInRange(0, directions.length - 1)];
     }
