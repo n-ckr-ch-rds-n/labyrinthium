@@ -19,11 +19,11 @@
 	const movementService = new MovementService();
 	const drawService = new DrawService(gameContext, squareWidth);
 
-	const maze = new Maze(gameContext, {
-		squareWidth,
+	const maze = new Maze({
 		numberOfColumns: complexity,
-		numberOfRows
-	}, movementService);
+		numberOfRows,
+		squareWidth
+	}, movementService, drawService);
 	const mazeData = maze.build();
 	const wanderer = new Wanderer(mazeData, movementService, drawService);
 	document.addEventListener('keyup', (e) => {

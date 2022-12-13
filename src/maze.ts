@@ -5,16 +5,16 @@ import { Direction } from "./direction";
 import { SquareKind } from "./square.kind";
 import type { MazeData } from "./maze.data";
 import type { MovementService } from "./movement.service";
-import { colourBySquareKind } from "./colour.by.square.kind";
+import type { DrawService } from "./draw.service";
 
 export class Maze {
 
     private startPosition: GridLocation;
 
     constructor(
-        private gameContext: CanvasRenderingContext2D,
         private options: MazeOptions,
-        private movementService: MovementService
+        private movementService: MovementService,
+        private drawService: DrawService
     ) {
     }
 
@@ -25,26 +25,18 @@ export class Maze {
         return {
             startPosition: this.startPosition,
             layout: layoutWithRoute,
-            squareWidth: this.options.squareWidth
         };
     }
 
-    drawMaze(layout: GridSquare[][]) {
+    private drawMaze(layout: GridSquare[][]) {
         for (const row of layout) {
             for (const square of row) {
-                this.gameContext.fillStyle = colourBySquareKind[square.kind];
-                const {squareWidth} = this.options;
-                this.gameContext.fillRect(
-                    square.x,
-                    square.y,
-                    squareWidth,
-                    squareWidth
-                    );
+                this.drawService.drawSquare(square)
             }
         }
     }
 
-    toLayoutWithRoute(layout: GridSquare[][]): GridSquare[][] {
+    private toLayoutWithRoute(layout: GridSquare[][]): GridSquare[][] {
         let totalSteps = this.toTotalSteps(layout);
         this.startPosition = this.toRandomPosition(layout);
         let position = this.startPosition;
