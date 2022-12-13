@@ -6,24 +6,36 @@ import { SquareKind } from "./square.kind";
 
 export class Maze {
 
-    colourBySquareKind: Record<SquareKind, string> = {
+    private colourBySquareKind: Record<SquareKind, string> = {
         [SquareKind.Path]: 'white',
         [SquareKind.Wall]: 'green',
         [SquareKind.End]: 'yellow',
         [SquareKind.Start]: 'pink'
     }
 
-    public startPosition: GridLocation;
+    private _layout: GridSquare[][]
+    private _startPosition: GridSquare;
 
     constructor(
         private gameContext: CanvasRenderingContext2D,
         private options: MazeOptions
-    ) {}
+    ) {
+        this._layout = this.build();
+    }
 
-    build() {
+    get layout(): GridSquare[][] {
+        return this._layout;
+    }
+
+    get startPosition() {
+        return this._startPosition;
+    }
+
+    build(): GridSquare[][] {
         const layout = this.generateLayout();
         const layoutWithRoute = this.toLayoutWithRoute(layout);
-        this.drawMaze(layout);
+        this.drawMaze(layoutWithRoute);
+        return layoutWithRoute;
     }
 
     drawMaze(layout: GridSquare[][]) {
@@ -43,8 +55,8 @@ export class Maze {
 
     toLayoutWithRoute(layout: GridSquare[][]): GridSquare[][] {
         let totalSteps = this.toTotalSteps(layout);
-        this.startPosition = this.toRandomPosition(layout);
-        let position = this.startPosition;
+        const startPosition = this.toRandomPosition(layout);
+        let position = startPosition;
         while (totalSteps >= 0) {
             const numberOfStepsToTake = this.toRandomNumberInRange(1, 5);
             const direction = this.generateDirection();
@@ -58,7 +70,8 @@ export class Maze {
             }
         }
         layout[position.row][position.column].kind = SquareKind.End;
-        layout[this.startPosition.row][this.startPosition.column].kind = SquareKind.Start;
+        layout[startPosition.row][startPosition.column].kind = SquareKind.Start;
+        this._startPosition = layout[startPosition.row][startPosition.column];
         return layout;
     }
 

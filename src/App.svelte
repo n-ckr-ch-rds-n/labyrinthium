@@ -5,7 +5,6 @@
 	const complexity = 100;
 	const gameArea: HTMLCanvasElement = document.createElement('canvas');
 	const squareWidth = Math.floor(window.innerWidth / complexity);
-	console.log(squareWidth);
 	gameArea.width = squareWidth * complexity;
 	const numberOfRows = Math.floor(window.innerHeight / squareWidth);
     gameArea.height = squareWidth * numberOfRows;
@@ -21,24 +20,24 @@
 		numberOfColumns: complexity,
 		numberOfRows
 	});
-	maze.build();
-	// const wanderer = new Wanderer(gameContext, {
-	// 	centreX: 100,
-	// 	centreY: 100,
-	// 	radius: 35
-	// });
-	// document.addEventListener('keyup', (e) => {
-	// 	if (e.code === 'ArrowDown') {
-	// 		wanderer.moveDown();
-	// 	}
-	// 	if (e.code === 'ArrowUp') {
-	// 		wanderer.moveUp();
-	// 	}
-	// 	if (e.code === 'ArrowRight') {
-	// 		wanderer.moveRight();
-	// 	}
-	// 	if (e.code === 'ArrowLeft') {
-	// 		wanderer.moveLeft();
-	// 	}
-	// })
+	// maze.build();
+	const wanderer = new Wanderer(gameContext, {
+		centreX: 100,
+		centreY: 100,
+		radius: 35
+	}, maze);
+	document.addEventListener('keyup', (e) => {
+		if (e.code === 'ArrowDown') {
+			wanderer.moveDown();
+		}
+		if (e.code === 'ArrowUp') {
+			wanderer.moveUp();
+		}
+		if (e.code === 'ArrowRight') {
+			wanderer.moveRight();
+		}
+		if (e.code === 'ArrowLeft') {
+			wanderer.moveLeft();
+		}
+	})
 </script>

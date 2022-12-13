@@ -1,5 +1,6 @@
 import type { CircleDimensions } from "./circle.dimensions";
 import type { Position } from "./position";
+import { Maze } from "./maze";
 
 export class Wanderer {
 
@@ -7,11 +8,20 @@ export class Wanderer {
     private squareWidth: number;
 
     constructor(private gameContext: CanvasRenderingContext2D,
-                private dimensions: CircleDimensions) {
+                private dimensions: CircleDimensions,
+                private maze: Maze) {
+        this.gameContext.fillStyle = 'black';
+        console.log(this.maze.startPosition);
+        this.gameContext.fillRect(
+            this.maze.startPosition.x,
+            this.maze.startPosition.y,
+            12,
+            12
+            );
         const {centreX, centreY} = this.dimensions;
         this.position = {centreX, centreY};
         this.squareWidth = this.dimensions.radius * 4;
-        this.drawCircle({centreX, centreY});
+        // this.drawCircle({centreX, centreY});
     }
 
     moveDown() {
