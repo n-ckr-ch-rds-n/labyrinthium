@@ -68,9 +68,9 @@ export class Maze {
 
     private generateLayout(): GridSquare[][] {
         return [...Array(this.options.numberOfRows)].map((a, i) => {
-            const y = i * this.options.squareWidth;
+            const y = i * this.drawService.squareWidth;
             return [...Array(this.options.numberOfColumns)].map((a, i) => ({
-                y, x: i * this.options.squareWidth,
+                y, x: i * this.drawService.squareWidth,
                 kind: this.toWallOrPath()
             }))
         });

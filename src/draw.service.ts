@@ -12,7 +12,11 @@ export class DrawService {
     }
 
     constructor(private gameContext: CanvasRenderingContext2D,
-        private squareWidth: number) {}
+        private _squareWidth: number) {}
+
+        get squareWidth() {
+            return this._squareWidth;
+        }
 
         drawSquare(square: GridSquare) {
             this.gameContext.fillStyle = this.colourBySquareKind[square.kind];

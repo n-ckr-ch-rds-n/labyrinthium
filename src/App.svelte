@@ -22,7 +22,6 @@
 	const maze = new Maze({
 		numberOfColumns: complexity,
 		numberOfRows,
-		squareWidth
 	}, movementService, drawService);
 	const mazeData = maze.build();
 	const wanderer = new Wanderer(mazeData, movementService, drawService);
