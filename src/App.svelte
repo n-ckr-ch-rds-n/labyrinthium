@@ -1,8 +1,9 @@
 <script lang="ts">
     import { Wanderer } from "./wanderer";
 	import { Maze } from "./maze";
+    import { MovementService } from "./movement.service";
 
-	const complexity = 50;
+	const complexity = 300;
 	const gameArea: HTMLCanvasElement = document.createElement('canvas');
 	const squareWidth = Math.floor(window.innerWidth / complexity);
 	gameArea.width = squareWidth * complexity;
@@ -14,18 +15,14 @@
 	container.appendChild(gameArea);
 	document.body.insertBefore(container, document.body.childNodes[0]);
     const gameContext: CanvasRenderingContext2D = gameArea.getContext("2d");
-
+	const movementService = new MovementService();
 	const maze = new Maze(gameContext, {
 		squareWidth,
 		numberOfColumns: complexity,
 		numberOfRows
-	});
+	}, movementService);
 	const mazeData = maze.build();
-	const wanderer = new Wanderer(gameContext, {
-		centreX: 100,
-		centreY: 100,
-		radius: 35
-	}, mazeData);
+	const wanderer = new Wanderer(gameContext, mazeData, movementService);
 	document.addEventListener('keyup', (e) => {
 		if (e.code === 'ArrowDown') {
 			wanderer.moveDown();

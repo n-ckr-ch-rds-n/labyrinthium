@@ -4,13 +4,14 @@ import type { GridLocation } from "./grid.location";
 import { Direction } from "./direction";
 import { SquareKind } from "./square.kind";
 import type { MazeData } from "./maze.data";
+import type { MovementService } from "./movement.service";
 
 export class Maze {
 
     private colourBySquareKind: Record<SquareKind, string> = {
-        [SquareKind.Path]: 'white',
+        [SquareKind.Path]: 'black',
         [SquareKind.Wall]: 'green',
-        [SquareKind.End]: 'yellow',
+        [SquareKind.End]: 'orange',
         [SquareKind.Start]: 'pink'
     }
 
@@ -18,7 +19,8 @@ export class Maze {
 
     constructor(
         private gameContext: CanvasRenderingContext2D,
-        private options: MazeOptions
+        private options: MazeOptions,
+        private movementService: MovementService
     ) {
     }
 
@@ -53,10 +55,10 @@ export class Maze {
         this.startPosition = this.toRandomPosition(layout);
         let position = this.startPosition;
         while (totalSteps >= 0) {
-            const numberOfStepsToTake = this.toRandomNumberInRange(1, 5);
+            const numberOfStepsToTake = this.toRandomNumberInRange(3, 8);
             const direction = this.generateDirection();
             for (let i = 0; i <= numberOfStepsToTake; i++) {
-                const newPosition = this.toNewPosition(position, direction);
+                const newPosition = this.movementService.toNewPosition(position, direction);
                 if (this.positionValid(newPosition, layout)) {
                     position = newPosition;
                     layout[position.row][position.column].kind = SquareKind.Path;
@@ -76,16 +78,6 @@ export class Maze {
     generateDirection(): Direction {
         const directions = Object.values(Direction);
         return directions[this.toRandomNumberInRange(0, directions.length - 1)];
-    }
-
-    toNewPosition(currentPosition: GridLocation, direction: Direction): GridLocation {
-        const newPositionByDirection: Record<Direction, GridLocation> = {
-            [Direction.North]: {...currentPosition, row: currentPosition.row - 1},
-            [Direction.South]: {...currentPosition, row: currentPosition.row + 1},
-            [Direction.East]: {...currentPosition, column: currentPosition.column + 1},
-            [Direction.West]: {...currentPosition, column: currentPosition.column - 1}
-        }
-        return newPositionByDirection[direction];
     }
 
     private generateLayout(): GridSquare[][] {

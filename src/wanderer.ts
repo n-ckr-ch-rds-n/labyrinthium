@@ -1,30 +1,24 @@
-import type { CircleDimensions } from "./circle.dimensions";
-import type { Position } from "./position";
 import type { MazeData } from "./maze.data";
 import type { GridLocation } from "./grid.location";
 import type { GridSquare } from "./grid.square";
+import type { MovementService } from "./movement.service";
+import { Direction } from "./direction";
+import { SquareKind } from "./square.kind";
 
 export class Wanderer {
-
-    private position: Position;
-    private squareWidth: number;
 
     private location: GridLocation;
 
     constructor(private gameContext: CanvasRenderingContext2D,
-                private dimensions: CircleDimensions,
-                private maze: MazeData) {
+                private maze: MazeData,
+                private movementService: MovementService) {
         this.location = {...this.maze.startPosition};
         const startSquare: GridSquare = this.maze.layout[this.location.row][this.location.column];
         this.drawWanderer(startSquare.x, startSquare.y);
-        const {centreX, centreY} = this.dimensions;
-        this.position = {centreX, centreY};
-        this.squareWidth = this.dimensions.radius * 4;
-        // this.drawCircle({centreX, centreY});
     }
 
     drawWanderer(x: number, y: number) {
-        this.gameContext.fillStyle = 'black';
+        this.gameContext.fillStyle = 'pink';
         this.gameContext.fillRect(
             x,
             y,
@@ -34,56 +28,43 @@ export class Wanderer {
     }
 
     moveDown() {
-        this.move({
-            ...this.position,
-            centreY: this.position.centreY + this.squareWidth
-        });
+        const newPosition = this.movementService.toNewPosition(this.location, Direction.South)
+        this.moveWanderer(newPosition);
     }
 
     moveUp() {
-        this.move({
-            ...this.position,
-            centreY: this.position.centreY - this.squareWidth
-        });
+        const newPosition = this.movementService.toNewPosition(this.location, Direction.North)
+        this.moveWanderer(newPosition);
     }
 
     moveRight() {
-        this.move({
-            ...this.position,
-            centreX: this.position.centreX + this.squareWidth,
-        });
+        const newPosition = this.movementService.toNewPosition(this.location, Direction.East)
+        this.moveWanderer(newPosition);
     }
 
 
     moveLeft() {
-        this.move({
-            ...this.position,
-            centreX: this.position.centreX - this.squareWidth,
-        });
+        const newPosition = this.movementService.toNewPosition(this.location, Direction.West);
+        this.moveWanderer(newPosition);
     }
 
-    private move(position: Position) {
-        this.clearSquare();
-        this.drawCircle(position);
-        this.position = position;
+    private clearSquare(oldPosition: GridLocation) {
+        const squareToClear = this.maze.layout[oldPosition.row][oldPosition.column];
+        this.gameContext.clearRect(squareToClear.x, squareToClear.y, this.maze.squareWidth, this.maze.squareWidth);
     }
 
-    private drawCircle(position: Position) {
-        this.gameContext.beginPath();
-        const {centreX, centreY} = position;
-        this.gameContext.arc(centreX, centreY, this.dimensions.radius, 0, 3 * Math.PI);
-        this.gameContext.stroke();
+    private newPositionValid(newPosition: GridLocation) {
+        return this.maze.layout[newPosition.row]
+            && this.maze.layout[newPosition.row][newPosition.column]
+            && [SquareKind.Path, SquareKind.Start, SquareKind.End].includes(this.maze.layout[newPosition.row][newPosition.column].kind)
     }
 
-    private clearSquare() {
-        const squareRadius = this.dimensions.radius * 2;
-        this.gameContext.clearRect(this.position.centreX - squareRadius, 
-            this.position.centreY - squareRadius, 
-            this.squareWidth, this.squareWidth);
-        // this.gameContext.beginPath();
-        // this.gameContext.rect(this.position.centreX - squareRadius, 
-        //     this.position.centreY - squareRadius, 
-        //     this.squareWidth, this.squareWidth);
-        //     this.gameContext.stroke();
+    private moveWanderer(newPosition: GridLocation) {
+        if (this.newPositionValid(newPosition)) {
+            this.clearSquare(this.location);
+            const newSquare = this.maze.layout[newPosition.row][newPosition.column];
+            this.drawWanderer(newSquare.x, newSquare.y);
+            this.location = newPosition;
+        }
     }
 }
