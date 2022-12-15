@@ -14,7 +14,7 @@
 	container.style.cssText += 'display:flex;justify-content:center;';
 	gameArea.style.cssText += 'border: 2px solid black;';
 	container.appendChild(gameArea);
-	document.body.insertBefore(container, document.body.childNodes[0]);
+	// document.body.insertBefore(container, document.body.childNodes[0]);
     const gameContext: CanvasRenderingContext2D = gameArea.getContext("2d");
 	const movementService = new MovementService();
 	const drawService = new DrawService(gameContext, squareWidth);
@@ -42,19 +42,27 @@
 </script>
 
 <main>
-	<h1 class="header">HELLO THERE</h1>
+	<h1 class="header">LABYRINTHIUM</h1>
 </main>
 
 <style>
 
 @font-face {
-        font-family: "Arcade";
-        src: url("../assets/ARCADECLASSIC.TTF");
-    }
+    font-family: "Arcade";
+    src: url("../assets/ARCADECLASSIC.TTF");
+}
 
-	h1 {
-		font-family: 'Arcade';
-		color: 'green';
-		font-size: '1000px';
-	}
+main {
+	display:flex; 
+	justify-content:center;
+	background-color: black;
+	height: 100%;
+}
+
+h1 {
+	font-family: 'Arcade';
+	color: green;
+	font-size: 5em;
+	margin: 0;
+}
 </style>
