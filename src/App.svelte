@@ -2,7 +2,7 @@
     import { Wanderer } from "./wanderer";
 	import { Maze } from "./maze";
     import { MovementService } from "./movement.service";
-    import { DrawService } from "./draw.service";
+    import { DrawService } from "./draw.service";    
 
 	const complexity = 300;
 	const gameArea: HTMLCanvasElement = document.createElement('canvas');
@@ -10,7 +10,7 @@
 	gameArea.width = squareWidth * complexity;
 	const numberOfRows = Math.floor(window.innerHeight / squareWidth);
     gameArea.height = squareWidth * numberOfRows;
-	const container = document.createElement('main');
+	const container = document.createElement('div');
 	container.style.cssText += 'display:flex;justify-content:center;';
 	gameArea.style.cssText += 'border: 2px solid black;';
 	container.appendChild(gameArea);
@@ -40,3 +40,19 @@
 		}
 	})
 </script>
+
+<main>
+	<h1 class="header">HELLO THERE</h1>
+</main>
+
+<style>
+
+@font-face {
+        font-family: "Arcade";
+        src: url("../assets/ARCADECLASSIC.TTF");
+    }
+
+	h1 {
+		font-family: 'Arcade';
+	}
+</style>
