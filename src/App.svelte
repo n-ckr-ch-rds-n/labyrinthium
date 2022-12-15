@@ -54,5 +54,7 @@
 
 	h1 {
 		font-family: 'Arcade';
+		color: 'green';
+		font-size: '1000px';
 	}
 </style>
