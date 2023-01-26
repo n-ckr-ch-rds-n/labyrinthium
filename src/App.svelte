@@ -3,6 +3,7 @@
 	import { Maze } from "./maze";
     import { MovementService } from "./movement.service";
     import { DrawService } from "./draw.service";    
+    import Game from "./Game.svelte";
 
 	const complexity = 300;
 	const gameArea: HTMLCanvasElement = document.createElement('canvas');
@@ -43,6 +44,7 @@
 
 <main>
 	<h1 class="header">LABYRINTHIUM</h1>
+	<Game></Game>
 </main>
 
 <style>
@@ -53,16 +55,16 @@
 }
 
 main {
-	display:flex; 
-	justify-content:center;
 	background-color: black;
 	height: 100%;
 }
 
 h1 {
+	text-align: center;
 	font-family: 'Arcade';
 	color: green;
 	font-size: 5em;
 	margin: 0;
 }
+
 </style>
