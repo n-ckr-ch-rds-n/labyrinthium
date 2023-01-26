@@ -9,12 +9,15 @@
 	const gameArea: HTMLCanvasElement = document.createElement('canvas');
 	const squareWidth = Math.floor(window.innerWidth / complexity);
 	gameArea.width = squareWidth * complexity;
+	const canvasWidth = squareWidth * complexity;
 	const numberOfRows = Math.floor(window.innerHeight / squareWidth);
     gameArea.height = squareWidth * numberOfRows;
+	const canvasHeight = squareWidth * numberOfRows;
 	const container = document.createElement('div');
 	container.style.cssText += 'display:flex;justify-content:center;';
 	gameArea.style.cssText += 'border: 2px solid black;';
 	container.appendChild(gameArea);
+	const canvas = gameArea;
 	// document.body.insertBefore(container, document.body.childNodes[0]);
     const gameContext: CanvasRenderingContext2D = gameArea.getContext("2d");
 	const movementService = new MovementService();
@@ -44,7 +47,9 @@
 
 <main>
 	<h1 class="header">LABYRINTHIUM</h1>
-	<Game></Game>
+	<div class="game-container">
+		<Game canvasWidth={canvasWidth} canvasHeight={canvasHeight} canvas={canvas}></Game>
+	</div>
 </main>
 
 <style>
