@@ -9,6 +9,7 @@
         const canvasElement = document.getElementById("game-area") as HTMLCanvasElement;
         const gameContext = canvasElement.getContext("2d");
         const labyrinthium = new Labyrinthium(gameContext, config);
+        labyrinthium.init();
     })
 
 </script>

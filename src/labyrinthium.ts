@@ -14,5 +14,23 @@ export class Labyrinthium {
         const maze = new Maze(this.config, movementService, drawService);
         const mazeData = maze.build();
         const wanderer = new Wanderer(mazeData, movementService, drawService);
+        this.initialiseControls(wanderer);
+    }
+
+    private initialiseControls(wanderer: Wanderer) {
+        document.addEventListener('keyup', (e) => {
+            if (e.code === 'ArrowDown') {
+                wanderer.moveDown();
+            }
+            if (e.code === 'ArrowUp') {
+                wanderer.moveUp();
+            }
+            if (e.code === 'ArrowRight') {
+                wanderer.moveRight();
+            }
+            if (e.code === 'ArrowLeft') {
+                wanderer.moveLeft();
+            }
+        })
     }
 }
