@@ -1,23 +1,29 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import type { InitConfig } from "./init.config";
+    import { Labyrinthium } from "./labyrinthium";
 
-    export let canvasWidth: number;
-    export let canvasHeight: number;
+    export let config: InitConfig;
 
     onMount(() => {
-        const canvasElement = document.getElementById("gameArea") as HTMLCanvasElement;
+        const canvasElement = document.getElementById("game-area") as HTMLCanvasElement;
         const gameContext = canvasElement.getContext("2d");
+        const labyrinthium = new Labyrinthium(gameContext, config);
     })
 
 </script>
 
-<div id="game-container">
-    <canvas id="gameArea" width={canvasWidth} height={canvasHeight}></canvas>
+<div class="game-container">
+    <canvas id="game-area" width={config.canvasWidth} height={config.canvasHeight}></canvas>
 </div>
 
 <style>
-    #game-container {
+    .game-container {
         display: flex;
         justify-content: center;
+    }
+
+    #game-area {
+        border: 2px solid black;
     }
 </style>

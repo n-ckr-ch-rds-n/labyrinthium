@@ -1,4 +1,3 @@
-import type { MazeOptions } from "./maze.options";
 import type { GridSquare } from "./grid.square";
 import type { GridLocation } from "./grid.location";
 import { Direction } from "./direction";
@@ -6,13 +5,14 @@ import { SquareKind } from "./square.kind";
 import type { MazeData } from "./maze.data";
 import type { MovementService } from "./movement.service";
 import type { DrawService } from "./draw.service";
+import type { InitConfig } from "./init.config";
 
 export class Maze {
 
     private startPosition: GridLocation;
 
     constructor(
-        private options: MazeOptions,
+        private config: InitConfig,
         private movementService: MovementService,
         private drawService: DrawService
     ) {
@@ -67,9 +67,9 @@ export class Maze {
     }
 
     private generateLayout(): GridSquare[][] {
-        return [...Array(this.options.numberOfRows)].map((a, i) => {
+        return [...Array(this.config.numberOfRows)].map((a, i) => {
             const y = i * this.drawService.squareWidth;
-            return [...Array(this.options.numberOfColumns)].map((a, i) => ({
+            return [...Array(this.config.numberOfColumns)].map((a, i) => ({
                 y, x: i * this.drawService.squareWidth,
                 kind: this.toWallOrPath()
             }))

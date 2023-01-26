@@ -4,6 +4,7 @@
     import { MovementService } from "./movement.service";
     import { DrawService } from "./draw.service";    
     import Game from "./Game.svelte";
+    import type { InitConfig } from "./init.config";
 
 	const complexity = 300;
 	const gameArea: HTMLCanvasElement = document.createElement('canvas');
@@ -18,15 +19,19 @@
 	gameArea.style.cssText += 'border: 2px solid black;';
 	container.appendChild(gameArea);
 	const canvas = gameArea;
+	const initConfig: InitConfig = {
+		squareWidth,
+		canvasHeight,
+		canvasWidth,
+		numberOfColumns: complexity,
+		numberOfRows
+	}
 	// document.body.insertBefore(container, document.body.childNodes[0]);
     const gameContext: CanvasRenderingContext2D = gameArea.getContext("2d");
 	const movementService = new MovementService();
 	const drawService = new DrawService(gameContext, squareWidth);
 
-	const maze = new Maze({
-		numberOfColumns: complexity,
-		numberOfRows,
-	}, movementService, drawService);
+	const maze = new Maze(initConfig, movementService, drawService);
 	const mazeData = maze.build();
 	const wanderer = new Wanderer(mazeData, movementService, drawService);
 	document.addEventListener('keyup', (e) => {
@@ -48,7 +53,7 @@
 <main>
 	<h1 class="header">LABYRINTHIUM</h1>
 	<div class="game-container">
-		<Game canvasWidth={canvasWidth} canvasHeight={canvasHeight} canvas={canvas}></Game>
+		<Game config={initConfig}></Game>
 	</div>
 </main>
 
