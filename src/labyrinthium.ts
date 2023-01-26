@@ -5,6 +5,7 @@ import { Maze } from "./maze";
 import { Wanderer } from "./wanderer";
 
 export class Labyrinthium {
+    
     constructor(private gameContext: CanvasRenderingContext2D,
         private config: InitConfig) {}
 
