@@ -25,6 +25,7 @@
     "typescript": "^4.0.0"
   },
   "dependencies": {
+    "rxjs": "^7.8.0",
     "sirv-cli": "^2.0.0"
   }
 }
