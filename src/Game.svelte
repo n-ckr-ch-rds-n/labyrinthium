@@ -5,12 +5,14 @@
 
     export let config: InitConfig;
 
-    onMount(() => {
+    const startGame = (config: InitConfig) => {
         const canvasElement = document.getElementById("game-area") as HTMLCanvasElement;
         const gameContext = canvasElement.getContext("2d");
         const labyrinthium = new Labyrinthium(gameContext, config);
-        labyrinthium.init();
-    })
+        labyrinthium.init();  
+    }
+
+    onMount(() => startGame(config))
 
 </script>
 

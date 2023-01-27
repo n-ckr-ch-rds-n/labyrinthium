@@ -7,7 +7,7 @@
 	let initConfig: InitConfig;
 	let complexity = [150];
 
-	onMount(() => {
+	const setupGame = () => {
 		const header = document.getElementById('header');
 		const numberOfColumns = complexity[0];
 		const gameAreaHeight = window.innerHeight - header.offsetHeight;
@@ -20,7 +20,10 @@
 			numberOfColumns,
 			numberOfRows
 		}
-	})
+	}
+
+	onMount(() => setupGame())
+
 </script>
 
 <main>
@@ -28,8 +31,7 @@
 		<h1>LABYRINTHIUM</h1>
 		<div class="slider-container">
 			<RangeSlider min={50} max={300} 
-			bind:values={complexity}
-			on:change={console.log}/>
+			bind:values={complexity}/>
 		</div>
 	</div>
 	<div id="game-container">
