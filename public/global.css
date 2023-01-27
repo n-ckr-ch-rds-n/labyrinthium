@@ -69,3 +69,7 @@ button:focus {
 	border-color: #666;
 }
 
+.rangeSlider {
+	width: 33vw;
+	font-size: small;
+}

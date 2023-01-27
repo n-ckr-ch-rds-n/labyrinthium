@@ -7,15 +7,15 @@
 	let initConfig: InitConfig;
 
 	onMount(() => {
-		const complexity = 100;
+		const complexity = 300;
 		const header = document.getElementById('header');
 		const gameAreaHeight = window.innerHeight - header.offsetHeight;
 		const squareWidth = Math.floor(header.offsetWidth / complexity);
 		const numberOfRows = Math.floor(gameAreaHeight / squareWidth);
 		initConfig = {
 			squareWidth,
-			canvasHeight: squareWidth * numberOfRows,
-			canvasWidth: squareWidth * complexity,
+			canvasHeight: squareWidth * numberOfRows - 50,
+			canvasWidth: squareWidth * complexity - 50,
 			numberOfColumns: complexity,
 			numberOfRows
 		}
@@ -23,8 +23,12 @@
 </script>
 
 <main>
-	<h1 id="header">LABYRINTHIUM</h1>
-	<RangeSlider values={[50]} />
+	<div id="header">
+		<h1>LABYRINTHIUM</h1>
+		<div class="slider-container">
+			<RangeSlider min={50} max={300}/>
+		</div>
+	</div>
 	<div id="game-container">
 		{#if initConfig}
 			<Game config={initConfig}></Game>
@@ -50,6 +54,12 @@
 		color: green;
 		font-size: 5em;
 		margin: 0;
+	}
+
+	.slider-container {
+		display:flex;
+		justify-content: center;
+		margin-bottom: 20px;
 	}
 
 </style>
