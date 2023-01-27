@@ -28,8 +28,10 @@ export class Labyrinthium {
         const drawService = new DrawService(this.gameContext, this.config.squareWidth);
         const maze = new Maze(this.config, movementService, drawService);
         const mazeData = maze.build();
-        const wanderer = new Wanderer(mazeData, movementService, drawService);
+        const gameState = new Subject<GameState>();
+        const wanderer = new Wanderer(mazeData, movementService, drawService, gameState);
         this.initialiseControls(wanderer);
+        return gameState;
     }
 
     destroy() {
