@@ -7,7 +7,7 @@ export class DrawService {
         [SquareKind.Path]: 'black',
         [SquareKind.Wall]: 'green',
         [SquareKind.End]: 'orange',
-        [SquareKind.Start]: 'pink',
+        [SquareKind.Start]: 'white',
         [SquareKind.Wanderer]: 'blue'
     }
 

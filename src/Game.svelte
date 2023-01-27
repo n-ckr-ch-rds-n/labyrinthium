@@ -3,19 +3,20 @@
     import { onDestroy, onMount } from "svelte";
     import type { InitConfig } from "./init.config";
     import { Labyrinthium } from "./labyrinthium";
+	import { createEventDispatcher } from 'svelte';
 
     export let config: InitConfig;
 
     let labyrinthium: Labyrinthium;
     let gameStateSubscription: Subscription;
 
+    const dispatch = createEventDispatcher();
+
     onMount(() => {
         const canvasElement = document.getElementById("game-area") as HTMLCanvasElement;
         const gameContext = canvasElement.getContext("2d");
         labyrinthium = new Labyrinthium(gameContext, config);
-        gameStateSubscription = labyrinthium.init().subscribe((s) => {
-            console.log(s);
-        });
+        gameStateSubscription = labyrinthium.init().subscribe(() => dispatch('end'));
     })
 
     onDestroy(() => {

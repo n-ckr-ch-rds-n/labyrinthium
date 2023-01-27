@@ -38,7 +38,7 @@
 	<div id="game-container">
 		{#if initConfig}
 			{#key initConfig}
-				<Game config={initConfig}></Game>
+				<Game config={initConfig} on:end={setupGame}></Game>
 			{/key}
 		{/if}
 	</div>
