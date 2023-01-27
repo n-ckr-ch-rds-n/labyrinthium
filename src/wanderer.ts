@@ -14,14 +14,14 @@ export class Wanderer {
 
     constructor(private maze: MazeData,
                 private movementService: MovementService,
-                private drawService: DrawService,
-                private randomNumber: number) {
+                private drawService: DrawService) {
         this.location = {...this.maze.startPosition};
         const startSquare: GridSquare = this.maze.layout[this.location.row][this.location.column];
         this.drawWanderer(startSquare.x, startSquare.y);
     }
 
     moveWanderer(direction: Direction) {
+        console.log('Moving wanderer');
         const newPosition = this.movementService.toNewPosition(this.location, direction);
         if (this.newPositionValid(newPosition)) {
             this.clearSquare(this.location);

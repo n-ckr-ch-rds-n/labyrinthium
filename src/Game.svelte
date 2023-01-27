@@ -10,13 +10,11 @@
     onMount(() => {
         const canvasElement = document.getElementById("game-area") as HTMLCanvasElement;
         const gameContext = canvasElement.getContext("2d");
-        const rnd = Math.random();
-        labyrinthium = new Labyrinthium(gameContext, config, rnd);
+        labyrinthium = new Labyrinthium(gameContext, config);
         labyrinthium.init();
     })
 
     onDestroy(() => {
-        console.log('destroying')
         labyrinthium.destroy();
     })
 

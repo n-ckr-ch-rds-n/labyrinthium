@@ -21,20 +21,18 @@ export class Labyrinthium {
     }
     
     constructor(private gameContext: CanvasRenderingContext2D,
-        private config: InitConfig,
-        private randomNumber: number) {}
+        private config: InitConfig) {}
 
     init() {
         const movementService = new MovementService();
         const drawService = new DrawService(this.gameContext, this.config.squareWidth);
         const maze = new Maze(this.config, movementService, drawService);
         const mazeData = maze.build();
-        const wanderer = new Wanderer(mazeData, movementService, drawService, this.randomNumber);
+        const wanderer = new Wanderer(mazeData, movementService, drawService);
         this.initialiseControls(wanderer);
     }
 
     destroy() {
-        console.log('POOOOOOOO');
         if (this.controlSubscription) {
             this.controlSubscription.unsubscribe();
         }
