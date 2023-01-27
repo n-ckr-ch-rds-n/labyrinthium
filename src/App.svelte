@@ -5,18 +5,19 @@
 	import RangeSlider from "svelte-range-slider-pips";
 
 	let initConfig: InitConfig;
+	let complexity = [150];
 
 	onMount(() => {
-		const complexity = 300;
 		const header = document.getElementById('header');
+		const numberOfColumns = complexity[0];
 		const gameAreaHeight = window.innerHeight - header.offsetHeight;
-		const squareWidth = Math.floor(header.offsetWidth / complexity);
+		const squareWidth = Math.floor(header.offsetWidth / numberOfColumns);
 		const numberOfRows = Math.floor(gameAreaHeight / squareWidth);
 		initConfig = {
 			squareWidth,
 			canvasHeight: squareWidth * numberOfRows - 50,
-			canvasWidth: squareWidth * complexity - 50,
-			numberOfColumns: complexity,
+			canvasWidth: squareWidth * numberOfColumns - 50,
+			numberOfColumns,
 			numberOfRows
 		}
 	})
@@ -26,7 +27,9 @@
 	<div id="header">
 		<h1>LABYRINTHIUM</h1>
 		<div class="slider-container">
-			<RangeSlider min={50} max={300}/>
+			<RangeSlider min={50} max={300} 
+			bind:values={complexity}
+			on:change={console.log}/>
 		</div>
 	</div>
 	<div id="game-container">
@@ -57,7 +60,7 @@
 	}
 
 	.slider-container {
-		display:flex;
+		display: flex;
 		justify-content: center;
 		margin-bottom: 20px;
 	}
