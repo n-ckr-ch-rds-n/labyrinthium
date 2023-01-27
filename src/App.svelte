@@ -2,11 +2,12 @@
     import { onMount } from "svelte";
     import Game from "./Game.svelte";
     import type { InitConfig } from "./init.config";
+	import RangeSlider from "svelte-range-slider-pips";
 
 	let initConfig: InitConfig;
 
 	onMount(() => {
-		const complexity = 300;
+		const complexity = 100;
 		const header = document.getElementById('header');
 		const gameAreaHeight = window.innerHeight - header.offsetHeight;
 		const squareWidth = Math.floor(header.offsetWidth / complexity);
@@ -23,6 +24,7 @@
 
 <main>
 	<h1 id="header">LABYRINTHIUM</h1>
+	<RangeSlider values={[50]} />
 	<div id="game-container">
 		{#if initConfig}
 			<Game config={initConfig}></Game>

@@ -1,3 +1,10 @@
+:root {
+	--range-slider:          #414141; /* slider main background color */
+	--range-handle-inactive: green; /* inactive handle color */
+	--range-handle:          #59fb67; /* non-focussed handle color */
+	--range-handle-focus:    green; /* focussed handle color */
+}
+
 html, body {
 	position: relative;
 	width: 100%;
