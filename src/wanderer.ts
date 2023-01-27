@@ -59,6 +59,9 @@ export class Wanderer {
             this.clearSquare(this.location);
             const newSquare = this.maze.layout[newPosition.row][newPosition.column];
             this.drawWanderer(newSquare.x, newSquare.y);
+            if (newSquare.kind === SquareKind.End) {
+                console.log('YOU REACHED THE END');
+            }
             this.location = newPosition;
         }
     }
