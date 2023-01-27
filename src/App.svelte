@@ -5,7 +5,7 @@
 	import RangeSlider from "svelte-range-slider-pips";
 
 	let initConfig: InitConfig;
-	let complexity = [300];
+	let complexity = [150];
 
 	const setupGame = () => {
 		const header = document.getElementById('header');
@@ -31,12 +31,15 @@
 		<h1>LABYRINTHIUM</h1>
 		<div class="slider-container">
 			<RangeSlider min={50} max={300} 
-			bind:values={complexity}/>
+			bind:values={complexity}
+			on:change={setupGame}/>
 		</div>
 	</div>
 	<div id="game-container">
 		{#if initConfig}
-			<Game config={initConfig}></Game>
+			{#key initConfig}
+				<Game config={initConfig}></Game>
+			{/key}
 		{/if}
 	</div>
 </main>
