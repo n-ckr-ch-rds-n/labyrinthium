@@ -8,7 +8,7 @@ export class DrawService {
         [SquareKind.Wall]: 'green',
         [SquareKind.End]: 'orange',
         [SquareKind.Start]: 'pink',
-        [SquareKind.Wanderer]: 'pink'
+        [SquareKind.Wanderer]: 'blue'
     }
 
     constructor(private gameContext: CanvasRenderingContext2D,

@@ -5,18 +5,18 @@
 	import RangeSlider from "svelte-range-slider-pips";
 
 	let initConfig: InitConfig;
-	let complexity = [150];
+	let complexity = [300];
 
 	const setupGame = () => {
 		const header = document.getElementById('header');
 		const numberOfColumns = complexity[0];
-		const gameAreaHeight = window.innerHeight - header.offsetHeight;
+		const gameAreaHeight = window.innerHeight - header.offsetHeight - 50;
 		const squareWidth = Math.floor(header.offsetWidth / numberOfColumns);
 		const numberOfRows = Math.floor(gameAreaHeight / squareWidth);
 		initConfig = {
 			squareWidth,
-			canvasHeight: squareWidth * numberOfRows - 50,
-			canvasWidth: squareWidth * numberOfColumns - 50,
+			canvasHeight: squareWidth * numberOfRows,
+			canvasWidth: squareWidth * numberOfColumns,
 			numberOfColumns,
 			numberOfRows
 		}
