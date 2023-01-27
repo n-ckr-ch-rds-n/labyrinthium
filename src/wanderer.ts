@@ -15,7 +15,7 @@ export class Wanderer {
     constructor(private maze: MazeData,
                 private movementService: MovementService,
                 private drawService: DrawService,
-                private gameState: Subject<GameState>) {
+                private randomNumber: number) {
         this.location = {...this.maze.startPosition};
         const startSquare: GridSquare = this.maze.layout[this.location.row][this.location.column];
         this.drawWanderer(startSquare.x, startSquare.y);
@@ -27,9 +27,6 @@ export class Wanderer {
             this.clearSquare(this.location);
             const newSquare = this.maze.layout[newPosition.row][newPosition.column];
             this.drawWanderer(newSquare.x, newSquare.y);
-            if (newSquare.kind === SquareKind.End) {
-                this.gameState.next(GameState.End);
-            }
             this.location = newPosition;
         }
     }

@@ -1,18 +1,24 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     import type { InitConfig } from "./init.config";
     import { Labyrinthium } from "./labyrinthium";
 
     export let config: InitConfig;
 
-    const startGame = (config: InitConfig) => {
+    let labyrinthium: Labyrinthium;
+
+    onMount(() => {
         const canvasElement = document.getElementById("game-area") as HTMLCanvasElement;
         const gameContext = canvasElement.getContext("2d");
-        const labyrinthium = new Labyrinthium(gameContext, config);
-        labyrinthium.init().subscribe(state => console.log(state));  
-    }
+        const rnd = Math.random();
+        labyrinthium = new Labyrinthium(gameContext, config, rnd);
+        labyrinthium.init();
+    })
 
-    onMount(() => startGame(config))
+    onDestroy(() => {
+        console.log('destroying')
+        labyrinthium.destroy();
+    })
 
 </script>
 

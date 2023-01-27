@@ -21,17 +21,23 @@ export class Labyrinthium {
     }
     
     constructor(private gameContext: CanvasRenderingContext2D,
-        private config: InitConfig) {}
+        private config: InitConfig,
+        private randomNumber: number) {}
 
-    init(): Subject<GameState> {
+    init() {
         const movementService = new MovementService();
         const drawService = new DrawService(this.gameContext, this.config.squareWidth);
         const maze = new Maze(this.config, movementService, drawService);
         const mazeData = maze.build();
-        const gameState = new Subject<GameState>()
-        const wanderer = new Wanderer(mazeData, movementService, drawService, gameState);
+        const wanderer = new Wanderer(mazeData, movementService, drawService, this.randomNumber);
         this.initialiseControls(wanderer);
-        return gameState;
+    }
+
+    destroy() {
+        console.log('POOOOOOOO');
+        if (this.controlSubscription) {
+            this.controlSubscription.unsubscribe();
+        }
     }
 
     private initialiseControls(wanderer: Wanderer) {
@@ -48,9 +54,7 @@ export class Labyrinthium {
     }
 
     private toKeySubscription(wanderer: Wanderer): Subscription {
-        if (this.controlSubscription) {
-            this.controlSubscription.unsubscribe();
-        }
+        this.destroy();
         return this.keyEventObservable.subscribe((key: ControlKey) => {
             wanderer.moveWanderer(this.directionByKey[key]);
         })
