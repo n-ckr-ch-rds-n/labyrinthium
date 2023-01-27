@@ -3,9 +3,10 @@ import { DrawService } from "./draw.service";
 import type { InitConfig } from "./init.config";
 import { Maze } from "./maze";
 import { Wanderer } from "./wanderer";
-import { fromEvent, Observable, throttleTime, filter, map, Subscription } from 'rxjs';
+import { fromEvent, Observable, throttleTime, filter, map, Subscription, Subject } from 'rxjs';
 import { ControlKey } from "./control.key";
 import { Direction } from "./direction";
+import type { GameState } from "./game.state";
 
 export class Labyrinthium {
 
@@ -22,13 +23,15 @@ export class Labyrinthium {
     constructor(private gameContext: CanvasRenderingContext2D,
         private config: InitConfig) {}
 
-    init(): void {
+    init(): Subject<GameState> {
         const movementService = new MovementService();
         const drawService = new DrawService(this.gameContext, this.config.squareWidth);
         const maze = new Maze(this.config, movementService, drawService);
         const mazeData = maze.build();
-        const wanderer = new Wanderer(mazeData, movementService, drawService);
+        const gameState = new Subject<GameState>()
+        const wanderer = new Wanderer(mazeData, movementService, drawService, gameState);
         this.initialiseControls(wanderer);
+        return gameState;
     }
 
     private initialiseControls(wanderer: Wanderer) {

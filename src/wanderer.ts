@@ -5,6 +5,8 @@ import type { MovementService } from "./movement.service";
 import type { Direction } from "./direction";
 import { SquareKind } from "./square.kind";
 import type { DrawService } from "./draw.service";
+import type { Subject } from "rxjs";
+import { GameState } from "./game.state";
 
 export class Wanderer {
 
@@ -12,7 +14,8 @@ export class Wanderer {
 
     constructor(private maze: MazeData,
                 private movementService: MovementService,
-                private drawService: DrawService) {
+                private drawService: DrawService,
+                private gameState: Subject<GameState>) {
         this.location = {...this.maze.startPosition};
         const startSquare: GridSquare = this.maze.layout[this.location.row][this.location.column];
         this.drawWanderer(startSquare.x, startSquare.y);
@@ -25,7 +28,7 @@ export class Wanderer {
             const newSquare = this.maze.layout[newPosition.row][newPosition.column];
             this.drawWanderer(newSquare.x, newSquare.y);
             if (newSquare.kind === SquareKind.End) {
-                console.log('YOU REACHED THE END');
+                this.gameState.next(GameState.End);
             }
             this.location = newPosition;
         }

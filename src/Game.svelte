@@ -9,7 +9,7 @@
         const canvasElement = document.getElementById("game-area") as HTMLCanvasElement;
         const gameContext = canvasElement.getContext("2d");
         const labyrinthium = new Labyrinthium(gameContext, config);
-        labyrinthium.init();  
+        labyrinthium.init().subscribe(state => console.log(state));  
     }
 
     onMount(() => startGame(config))
@@ -17,7 +17,10 @@
 </script>
 
 <div class="game-container">
-    <canvas id="game-area" width={config.canvasWidth} height={config.canvasHeight}></canvas>
+    <canvas id="game-area" 
+        width={config.canvasWidth}
+        height={config.canvasHeight}>
+    </canvas>
 </div>
 
 <style>
