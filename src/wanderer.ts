@@ -2,7 +2,7 @@ import type { MazeData } from "./maze.data";
 import type { GridLocation } from "./grid.location";
 import type { GridSquare } from "./grid.square";
 import type { MovementService } from "./movement.service";
-import { Direction } from "./direction";
+import type { Direction } from "./direction";
 import { SquareKind } from "./square.kind";
 import type { DrawService } from "./draw.service";
 
@@ -22,25 +22,17 @@ export class Wanderer {
         this.drawService.drawSquare({x, y, kind: SquareKind.Wanderer});
     }
 
-    moveDown() {
-        const newPosition = this.movementService.toNewPosition(this.location, Direction.South)
-        this.moveWanderer(newPosition);
-    }
-
-    moveUp() {
-        const newPosition = this.movementService.toNewPosition(this.location, Direction.North)
-        this.moveWanderer(newPosition);
-    }
-
-    moveRight() {
-        const newPosition = this.movementService.toNewPosition(this.location, Direction.East)
-        this.moveWanderer(newPosition);
-    }
-
-
-    moveLeft() {
-        const newPosition = this.movementService.toNewPosition(this.location, Direction.West);
-        this.moveWanderer(newPosition);
+    moveWanderer(direction: Direction) {
+        const newPosition = this.movementService.toNewPosition(this.location, direction);
+        if (this.newPositionValid(newPosition)) {
+            this.clearSquare(this.location);
+            const newSquare = this.maze.layout[newPosition.row][newPosition.column];
+            this.drawWanderer(newSquare.x, newSquare.y);
+            if (newSquare.kind === SquareKind.End) {
+                console.log('YOU REACHED THE END');
+            }
+            this.location = newPosition;
+        }
     }
 
     private clearSquare(oldPosition: GridLocation) {
@@ -54,15 +46,5 @@ export class Wanderer {
             && [SquareKind.Path, SquareKind.Start, SquareKind.End].includes(this.maze.layout[newPosition.row][newPosition.column].kind)
     }
 
-    private moveWanderer(newPosition: GridLocation) {
-        if (this.newPositionValid(newPosition)) {
-            this.clearSquare(this.location);
-            const newSquare = this.maze.layout[newPosition.row][newPosition.column];
-            this.drawWanderer(newSquare.x, newSquare.y);
-            if (newSquare.kind === SquareKind.End) {
-                console.log('YOU REACHED THE END');
-            }
-            this.location = newPosition;
-        }
-    }
+
 }

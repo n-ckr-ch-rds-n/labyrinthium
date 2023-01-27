@@ -5,17 +5,18 @@ import { Maze } from "./maze";
 import { Wanderer } from "./wanderer";
 import { fromEvent, Observable, throttleTime, filter, map, Subscription } from 'rxjs';
 import { ControlKey } from "./control.key";
+import { Direction } from "./direction";
 
 export class Labyrinthium {
 
     private keyEventObservable: Observable<ControlKey>;
     private controlSubscription: Subscription;
 
-    private movementByKey: Record<ControlKey, (w: Wanderer) => void> = {
-        [ControlKey.ArrowDown]: w => w.moveDown(),
-        [ControlKey.ArrowLeft]: w => w.moveLeft(),
-        [ControlKey.ArrowRight]: w => w.moveRight(),
-        [ControlKey.ArrowUp]: w => w.moveUp()
+    private directionByKey: Record<ControlKey, Direction> = {
+        [ControlKey.ArrowDown]: Direction.South,
+        [ControlKey.ArrowLeft]: Direction.West,
+        [ControlKey.ArrowRight]: Direction.East,
+        [ControlKey.ArrowUp]: Direction.North
     }
     
     constructor(private gameContext: CanvasRenderingContext2D,
@@ -48,7 +49,7 @@ export class Labyrinthium {
             this.controlSubscription.unsubscribe();
         }
         return this.keyEventObservable.subscribe((key: ControlKey) => {
-            this.movementByKey[key](wanderer)
+            wanderer.moveWanderer(this.directionByKey[key]);
         })
     }
 }
