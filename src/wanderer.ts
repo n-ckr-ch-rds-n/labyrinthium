@@ -18,10 +18,6 @@ export class Wanderer {
         this.drawWanderer(startSquare.x, startSquare.y);
     }
 
-    drawWanderer(x: number, y: number) {
-        this.drawService.drawSquare({x, y, kind: SquareKind.Wanderer});
-    }
-
     moveWanderer(direction: Direction) {
         const newPosition = this.movementService.toNewPosition(this.location, direction);
         if (this.newPositionValid(newPosition)) {
@@ -33,6 +29,10 @@ export class Wanderer {
             }
             this.location = newPosition;
         }
+    }
+
+    private drawWanderer(x: number, y: number) {
+        this.drawService.drawSquare({x, y, kind: SquareKind.Wanderer});
     }
 
     private clearSquare(oldPosition: GridLocation) {
