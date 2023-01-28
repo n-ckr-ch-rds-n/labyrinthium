@@ -650,8 +650,8 @@ var app = (function () {
             });
         }
         toWallOrPath() {
-            const squareKinds = [SquareKind.Path, SquareKind.Wall, SquareKind.Wall];
-            return squareKinds[this.toRandomNumberInRange(0, squareKinds.length - 1)];
+            const rnd = this.toRandomNumberInRange(1, 3);
+            return rnd > 1 ? SquareKind.Wall : SquareKind.Path;
         }
         toRandomNumberInRange(min, max) {
             return Math.floor(Math.random() * (max - min + 1) + min);
