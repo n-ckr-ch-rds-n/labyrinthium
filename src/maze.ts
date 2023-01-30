@@ -9,8 +9,6 @@ import type { InitConfig } from "./init.config";
 
 export class Maze {
 
-    private startPosition: GridLocation;
-
     constructor(
         private config: InitConfig,
         private movementService: MovementService,
@@ -19,12 +17,13 @@ export class Maze {
     }
 
     build(): MazeData {
-        const layout = this.generateLayout();
-        const layoutWithRoute = this.toLayoutWithRoute(layout);
-        this.drawMaze(layoutWithRoute);
+        const rawLayout = this.generateLayout();
+        const startPosition = this.toRandomPosition(rawLayout);
+        const layout = this.toLayoutWithRoute(rawLayout, startPosition);
+        this.drawMaze(layout);
         return {
-            startPosition: this.startPosition,
-            layout: layoutWithRoute,
+            startPosition,
+            layout
         };
     }
 
@@ -36,10 +35,9 @@ export class Maze {
         }
     }
 
-    private toLayoutWithRoute(layout: GridSquare[][]): GridSquare[][] {
+    private toLayoutWithRoute(layout: GridSquare[][], startPosition: GridLocation): GridSquare[][] {
         let totalSteps = this.toTotalSteps(layout);
-        this.startPosition = this.toRandomPosition(layout);
-        let position = this.startPosition;
+        let position = startPosition;
         while (totalSteps >= 0) {
             const numberOfStepsToTake = this.toRandomNumberInRange(3, 8);
             const direction = this.generateDirection();
@@ -53,7 +51,7 @@ export class Maze {
             }
         }
         layout[position.row][position.column].kind = SquareKind.End;
-        layout[this.startPosition.row][this.startPosition.column].kind = SquareKind.Start;
+        layout[startPosition.row][startPosition.column].kind = SquareKind.Start;
         return layout;
     }
 
