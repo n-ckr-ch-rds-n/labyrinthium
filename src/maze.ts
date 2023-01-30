@@ -6,6 +6,7 @@ import type { MazeData } from "./maze.data";
 import type { MovementService } from "./movement.service";
 import type { DrawService } from "./draw.service";
 import type { InitConfig } from "./init.config";
+import { Utils } from "./utils";
 
 export class Maze {
 
@@ -39,7 +40,7 @@ export class Maze {
         let totalSteps = this.toTotalSteps(layout);
         let position = startPosition;
         while (totalSteps >= 0) {
-            const numberOfStepsToTake = this.toRandomNumberInRange(3, 8);
+            const numberOfStepsToTake = Utils.toRandomNumberInRange(3, 8);
             const direction = this.generateDirection();
             for (let i = 0; i <= numberOfStepsToTake; i++) {
                 const newPosition = this.movementService.toNewPosition(position, direction);
@@ -61,7 +62,7 @@ export class Maze {
 
    private generateDirection(): Direction {
         const directions = Object.values(Direction);
-        return directions[this.toRandomNumberInRange(0, directions.length - 1)];
+        return directions[Utils.toRandomNumberInRange(0, directions.length - 1)];
     }
 
     private generateLayout(): GridSquare[][] {
@@ -75,12 +76,8 @@ export class Maze {
     }
 
     private toWallOrPath() {
-        const rnd = this.toRandomNumberInRange(1, 3);
+        const rnd = Utils.toRandomNumberInRange(1, 3);
         return rnd > 1 ? SquareKind.Wall : SquareKind.Path
-    }
-
-    private toRandomNumberInRange(min: number, max: number): number {
-        return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
     private toTotalSteps(layout: GridSquare[][]): number {
@@ -89,8 +86,8 @@ export class Maze {
 
     private toRandomPosition(layout: GridSquare[][]) {
        return {
-            row: this.toRandomNumberInRange(0, layout.length - 1),
-            column: this.toRandomNumberInRange(0, layout[0].length - 1)
+            row: Utils.toRandomNumberInRange(0, layout.length - 1),
+            column: Utils.toRandomNumberInRange(0, layout[0].length - 1)
         }
     }
 
