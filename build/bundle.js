@@ -547,6 +547,15 @@ var app = (function () {
         Direction["West"] = "west";
     })(Direction || (Direction = {}));
 
+    var SquareKind;
+    (function (SquareKind) {
+        SquareKind["Wall"] = "wall";
+        SquareKind["Path"] = "path";
+        SquareKind["End"] = "end";
+        SquareKind["Start"] = "start";
+        SquareKind["Wanderer"] = "wanderer";
+    })(SquareKind || (SquareKind = {}));
+
     class MovementService {
         constructor() {
             this.newPositionByDirection = {
@@ -559,16 +568,17 @@ var app = (function () {
         toNewPosition(currentPosition, direction) {
             return this.newPositionByDirection[direction](currentPosition);
         }
+        positionValid(position, layout) {
+            return !!(layout[position.row] && layout[position.row][position.column]);
+        }
+        newPositionValid(position, layout) {
+            return this.positionValid(position, layout) && this.positionFree(position, layout);
+        }
+        positionFree(position, layout) {
+            return [SquareKind.Path, SquareKind.Start, SquareKind.End]
+                .includes(layout[position.row][position.column].kind);
+        }
     }
-
-    var SquareKind;
-    (function (SquareKind) {
-        SquareKind["Wall"] = "wall";
-        SquareKind["Path"] = "path";
-        SquareKind["End"] = "end";
-        SquareKind["Start"] = "start";
-        SquareKind["Wanderer"] = "wanderer";
-    })(SquareKind || (SquareKind = {}));
 
     class DrawService {
         constructor(gameContext, _squareWidth) {
@@ -591,6 +601,12 @@ var app = (function () {
         }
     }
 
+    class Utils {
+        static toRandomNumberInRange(min, max) {
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        }
+    }
+
     class Maze {
         constructor(config, movementService, drawService) {
             this.config = config;
@@ -598,12 +614,13 @@ var app = (function () {
             this.drawService = drawService;
         }
         build() {
-            const layout = this.generateLayout();
-            const layoutWithRoute = this.toLayoutWithRoute(layout);
-            this.drawMaze(layoutWithRoute);
+            const rawLayout = this.generateLayout();
+            const startPosition = this.toRandomPosition(rawLayout);
+            const layout = this.toLayoutWithRoute(rawLayout, startPosition);
+            this.drawMaze(layout);
             return {
-                startPosition: this.startPosition,
-                layout: layoutWithRoute,
+                startPosition,
+                layout
             };
         }
         drawMaze(layout) {
@@ -613,16 +630,15 @@ var app = (function () {
                 }
             }
         }
-        toLayoutWithRoute(layout) {
+        toLayoutWithRoute(layout, startPosition) {
             let totalSteps = this.toTotalSteps(layout);
-            this.startPosition = this.toRandomPosition(layout);
-            let position = this.startPosition;
+            let position = startPosition;
             while (totalSteps >= 0) {
-                const numberOfStepsToTake = this.toRandomNumberInRange(3, 8);
+                const numberOfStepsToTake = Utils.toRandomNumberInRange(3, 8);
                 const direction = this.generateDirection();
                 for (let i = 0; i <= numberOfStepsToTake; i++) {
                     const newPosition = this.movementService.toNewPosition(position, direction);
-                    if (this.positionValid(newPosition, layout)) {
+                    if (this.movementService.positionValid(newPosition, layout)) {
                         position = newPosition;
                         layout[position.row][position.column].kind = SquareKind.Path;
                         totalSteps--;
@@ -630,15 +646,12 @@ var app = (function () {
                 }
             }
             layout[position.row][position.column].kind = SquareKind.End;
-            layout[this.startPosition.row][this.startPosition.column].kind = SquareKind.Start;
+            layout[startPosition.row][startPosition.column].kind = SquareKind.Start;
             return layout;
-        }
-        positionValid(position, layout) {
-            return !!(layout[position.row] && layout[position.row][position.column]);
         }
         generateDirection() {
             const directions = Object.values(Direction);
-            return directions[this.toRandomNumberInRange(0, directions.length - 1)];
+            return directions[Utils.toRandomNumberInRange(0, directions.length - 1)];
         }
         generateLayout() {
             return [...Array(this.config.numberOfRows)].map((a, i) => {
@@ -650,19 +663,16 @@ var app = (function () {
             });
         }
         toWallOrPath() {
-            const rnd = this.toRandomNumberInRange(1, 3);
+            const rnd = Utils.toRandomNumberInRange(1, 3);
             return rnd > 1 ? SquareKind.Wall : SquareKind.Path;
-        }
-        toRandomNumberInRange(min, max) {
-            return Math.floor(Math.random() * (max - min + 1) + min);
         }
         toTotalSteps(layout) {
             return Math.floor(layout.length * layout[0].length / 3);
         }
         toRandomPosition(layout) {
             return {
-                row: this.toRandomNumberInRange(0, layout.length - 1),
-                column: this.toRandomNumberInRange(0, layout[0].length - 1)
+                row: Utils.toRandomNumberInRange(0, layout.length - 1),
+                column: Utils.toRandomNumberInRange(0, layout[0].length - 1)
             };
         }
     }
@@ -683,9 +693,8 @@ var app = (function () {
             this.drawWanderer(startSquare.x, startSquare.y);
         }
         moveWanderer(direction) {
-            console.log('Moving wanderer');
             const newPosition = this.movementService.toNewPosition(this.location, direction);
-            if (this.newPositionValid(newPosition)) {
+            if (this.movementService.newPositionValid(newPosition, this.maze.layout)) {
                 this.clearSquare(this.location);
                 const newSquare = this.maze.layout[newPosition.row][newPosition.column];
                 this.drawWanderer(newSquare.x, newSquare.y);
@@ -701,11 +710,6 @@ var app = (function () {
         clearSquare(oldPosition) {
             const squareToClear = this.maze.layout[oldPosition.row][oldPosition.column];
             this.drawService.drawSquare(squareToClear);
-        }
-        newPositionValid(newPosition) {
-            return this.maze.layout[newPosition.row]
-                && this.maze.layout[newPosition.row][newPosition.column]
-                && [SquareKind.Path, SquareKind.Start, SquareKind.End].includes(this.maze.layout[newPosition.row][newPosition.column].kind);
         }
     }
 
@@ -5693,7 +5697,7 @@ var app = (function () {
     /* src/App.svelte generated by Svelte v3.53.1 */
     const file = "src/App.svelte";
 
-    // (33:2) {#if initConfig}
+    // (34:2) {#if initConfig}
     function create_if_block(ctx) {
     	let previous_key = /*initConfig*/ ctx[0];
     	let key_block_anchor;
@@ -5742,14 +5746,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(33:2) {#if initConfig}",
+    		source: "(34:2) {#if initConfig}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (34:3) {#key initConfig}
+    // (35:3) {#key initConfig}
     function create_key_block(ctx) {
     	let game;
     	let current;
@@ -5792,7 +5796,7 @@ var app = (function () {
     		block,
     		id: create_key_block.name,
     		type: "key",
-    		source: "(34:3) {#key initConfig}",
+    		source: "(35:3) {#key initConfig}",
     		ctx
     	});
 
@@ -5839,15 +5843,15 @@ var app = (function () {
     			div2 = element("div");
     			if (if_block) if_block.c();
     			attr_dev(h1, "class", "svelte-82a4gu");
-    			add_location(h1, file, 24, 2, 781);
+    			add_location(h1, file, 25, 2, 819);
     			attr_dev(div0, "class", "slider-container svelte-82a4gu");
-    			add_location(div0, file, 25, 2, 805);
+    			add_location(div0, file, 26, 2, 843);
     			attr_dev(div1, "id", "header");
-    			add_location(div1, file, 23, 1, 761);
+    			add_location(div1, file, 24, 1, 799);
     			attr_dev(div2, "id", "game-container");
-    			add_location(div2, file, 31, 1, 945);
+    			add_location(div2, file, 32, 1, 983);
     			attr_dev(main, "class", "svelte-82a4gu");
-    			add_location(main, file, 22, 0, 753);
+    			add_location(main, file, 23, 0, 791);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -5936,8 +5940,9 @@ var app = (function () {
     	const setupGame = () => {
     		const header = document.getElementById('header');
     		const numberOfColumns = complexity[0];
-    		const gameAreaHeight = window.innerHeight - header.offsetHeight - 50;
-    		const squareWidth = Math.floor(header.offsetWidth / numberOfColumns);
+    		const margin = 50;
+    		const gameAreaHeight = window.innerHeight - header.offsetHeight - margin;
+    		const squareWidth = Math.floor((header.offsetWidth - margin) / numberOfColumns);
     		const numberOfRows = Math.floor(gameAreaHeight / squareWidth);
 
     		$$invalidate(0, initConfig = {
