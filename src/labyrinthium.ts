@@ -10,7 +10,6 @@ import type { GameState } from "./game.state";
 
 export class Labyrinthium {
 
-    private keyEventObservable: Observable<ControlKey>;
     private controlSubscription: Subscription;
 
     private directionByKey: Record<ControlKey, Direction> = {
@@ -41,21 +40,21 @@ export class Labyrinthium {
     }
 
     private initialiseControls(wanderer: Wanderer) {
-        this.keyEventObservable = this.generateObservable();
-        this.controlSubscription = this.toKeySubscription(wanderer);
+        const keyEventObservable = this.generateObservable();
+        this.controlSubscription = this.toKeySubscription(wanderer, keyEventObservable);
     }
 
     private generateObservable(): Observable<ControlKey> {
-        return this.keyEventObservable || fromEvent(document, 'keydown').pipe(
+        return fromEvent(document, 'keydown').pipe(
             throttleTime(100),
             filter((e: KeyboardEvent) => Object.values(ControlKey).includes(e.code as ControlKey)),
             map((e: KeyboardEvent) => e.code as ControlKey)
         );
     }
 
-    private toKeySubscription(wanderer: Wanderer): Subscription {
+    private toKeySubscription(wanderer: Wanderer, keyEventObservable: Observable<ControlKey>): Subscription {
         this.destroy();
-        return this.keyEventObservable.subscribe((key: ControlKey) => {
+        return keyEventObservable.subscribe((key: ControlKey) => {
             wanderer.moveWanderer(this.directionByKey[key]);
         })
     }
