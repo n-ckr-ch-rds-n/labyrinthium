@@ -22,7 +22,6 @@ export class Wanderer {
     }
 
     moveWanderer(direction: Direction) {
-        console.log('Moving wanderer');
         const newPosition = this.movementService.toNewPosition(this.location, direction);
         if (this.newPositionValid(newPosition)) {
             this.clearSquare(this.location);
