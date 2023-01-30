@@ -10,8 +10,9 @@
 	const setupGame = () => {
 		const header = document.getElementById('header');
 		const numberOfColumns = complexity[0];
-		const gameAreaHeight = window.innerHeight - header.offsetHeight - 50;
-		const squareWidth = Math.floor(header.offsetWidth / numberOfColumns);
+		const margin = 50;
+		const gameAreaHeight = window.innerHeight - header.offsetHeight - margin;
+		const squareWidth = Math.floor((header.offsetWidth - margin) / numberOfColumns);
 		const numberOfRows = Math.floor(gameAreaHeight / squareWidth);
 		initConfig = {
 			squareWidth,
