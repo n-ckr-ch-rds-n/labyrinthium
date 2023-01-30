@@ -44,7 +44,7 @@ export class Maze {
             const direction = this.generateDirection();
             for (let i = 0; i <= numberOfStepsToTake; i++) {
                 const newPosition = this.movementService.toNewPosition(position, direction);
-                if (this.positionValid(newPosition, layout)) {
+                if (this.movementService.positionValid(newPosition, layout)) {
                     position = newPosition;
                     layout[position.row][position.column].kind = SquareKind.Path;
                     totalSteps--;
@@ -54,10 +54,6 @@ export class Maze {
         layout[position.row][position.column].kind = SquareKind.End;
         layout[startPosition.row][startPosition.column].kind = SquareKind.Start;
         return layout;
-    }
-
-    private positionValid(position: GridLocation, layout: GridSquare[][]): boolean {
-        return !!(layout[position.row] && layout[position.row][position.column]);
     }
 
    private generateDirection(): Direction {

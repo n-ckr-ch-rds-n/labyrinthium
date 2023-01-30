@@ -1,5 +1,7 @@
 import { Direction } from './direction';
 import type { GridLocation } from './grid.location';
+import type { GridSquare } from './grid.square';
+import { SquareKind } from './square.kind';
 
 export class MovementService {
 
@@ -13,5 +15,18 @@ export class MovementService {
     toNewPosition(currentPosition: GridLocation, direction: Direction): GridLocation {
         return this.newPositionByDirection[direction](currentPosition);
     }
-    
+
+    positionValid(position: GridLocation, layout: GridSquare[][]): boolean {
+        return !!(layout[position.row] && layout[position.row][position.column]);
+    }
+
+    newPositionValid(position: GridLocation, layout: GridSquare[][]): boolean {
+        return this.positionValid(position, layout) && this.positionFree(position, layout);
+    }
+
+    private positionFree(position: GridLocation, layout: GridSquare[][]): boolean {
+        return [SquareKind.Path, SquareKind.Start, SquareKind.End]
+            .includes(layout[position.row][position.column].kind)
+    }
+
 }

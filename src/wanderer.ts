@@ -23,7 +23,7 @@ export class Wanderer {
 
     moveWanderer(direction: Direction) {
         const newPosition = this.movementService.toNewPosition(this.location, direction);
-        if (this.newPositionValid(newPosition)) {
+        if (this.movementService.newPositionValid(newPosition, this.maze.layout)) {
             this.clearSquare(this.location);
             const newSquare = this.maze.layout[newPosition.row][newPosition.column];
             this.drawWanderer(newSquare.x, newSquare.y);
@@ -42,12 +42,5 @@ export class Wanderer {
         const squareToClear = this.maze.layout[oldPosition.row][oldPosition.column];
         this.drawService.drawSquare(squareToClear);
     }
-
-    private newPositionValid(newPosition: GridLocation) {
-        return this.maze.layout[newPosition.row]
-            && this.maze.layout[newPosition.row][newPosition.column]
-            && [SquareKind.Path, SquareKind.Start, SquareKind.End].includes(this.maze.layout[newPosition.row][newPosition.column].kind)
-    }
-
 
 }
